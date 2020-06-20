@@ -1,7 +1,7 @@
 # Run Sonarqube with Docker
 
-This repo spins up the community edition of this static code
-analysis tool quickly and painlessly. It can process different
+This repo spins up Sonarqube server, a static code
+analysis tool, quickly and painlessly. The server can process multiple
 languages based on the *extensions* you install,
 <https://www.sonarqube.org/features/multi-languages/>
 
@@ -104,7 +104,7 @@ SQ_HTTP_PORT=80
   `postgeres` docker image, <https://hub.docker.com/_/postgres>
 
 - `POSTGRES_UID`, `POSTGRES_GID` may be omitted completely.
-  I set them to my UID/GID so that I will be the owner of
+  I set them to my **numeric** UID/GID so that I will be the owner of
   entire PostgreSQL data directory tree so I can edit, copy
   stuff around without requiring `sudo` privilege outside
   the container. The `postgres` image actually doesn't
