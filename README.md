@@ -19,7 +19,8 @@ Strangely, Sonarqube started up fine the first time but
 after installing extensions, restart would fail with a cryptic
 error about a certain column not supporting UTF-8 encoding.
 
-Sonarqube also has this warning displayed on Docker Hub
+Sonarqube also has this warning displayed on
+[Docker Hub](https://hub.docker.com/_/sonarqube/)
 
 > Only a single instance of SonarQube can connect to a database schema. If you're using a Docker Swarm or Kubernetes, make sure that multiple SonarQube instances are never running on the same database schema simultaneously. This will cause SonarQube to behave unpredictably and data will be corrupted. There is no safeguard until [SONAR-10362](https://jira.sonarsource.com/browse/SONAR-10362).
 
