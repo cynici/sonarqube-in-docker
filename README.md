@@ -1,4 +1,4 @@
-# Run Sonarqube as Docker containers
+# Run Sonarqube with Docker
 
 This repo spins up the community edition of this static code
 analysis tool quickly and painlessly. It can process different
@@ -19,7 +19,22 @@ Strangely, Sonarqube started up fine the first time but
 after installing extensions, restart would fail with a cryptic
 error about a certain column not supporting UTF-8 encoding.
 
+Sonarqube also has this warning displayed on Docker Hub
+
+> Only a single instance of SonarQube can connect to a database schema. If you're using a Docker Swarm or Kubernetes, make sure that multiple SonarQube instances are never running on the same database schema simultaneously. This will cause SonarQube to behave unpredictably and data will be corrupted. There is no safeguard until [SONAR-10362](https://jira.sonarsource.com/browse/SONAR-10362).
+
 ---
+
+The [docker-compose.yml](docker-compose.yml) mounts the following
+directories as persistent storage for the containers in the
+`volumes` standza.
+
+You may specify alternative source path for your setup but the
+target mount points must remain the same.
+
+- `./pgdata` PostgreSQL data directory
+- `./data`, `./logs`, `./extension` are used by Sonarqube,
+  <https://docs.sonarqube.org/latest/setup/install-server/>
 
 ## Prerequisites
 
@@ -37,8 +52,8 @@ error about a certain column not supporting UTF-8 encoding.
 
 ### Create .env
 
-Beware that its format is not shell-like - do not use quotes
-unless you mean it literally
+Beware that the format may look familar but it is not shell-like.
+Do not use quotes unless you mean it literally,
 <https://docs.docker.com/compose/env-file/#syntax-rules>
 
 This file is not intentionally [excluded from the repo](.gitignore)
