@@ -51,7 +51,24 @@ target mount points must remain the same.
 
 ## How to spin up fresh instance of Sonarqube
 
-### Create .env
+### Increase process limits
+
+Create `/etc/sysctl.d/99-sonarqube.conf`
+
+```
+vm.max_map_count=262144
+fs.file-max=65536
+```
+
+Apply the changes
+
+```
+sudo sysctl -p /etc/sysctl.d/99-sonarqube.conf
+```
+
+### Define environment variables
+
+Create `.env`
 
 Beware that the format may look familar but it is not shell-like.
 Do not use quotes unless you mean it literally,
