@@ -18,6 +18,7 @@ used `postgis` image for the database server.
 Strangely, Sonarqube started up fine the first time but
 after installing extensions, restart would fail with a cryptic
 error about a certain column not supporting UTF-8 encoding.
+
 ---
 
 ## Prerequisites
