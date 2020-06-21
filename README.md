@@ -28,7 +28,7 @@ Sonarqube also has this warning displayed on
 
 The [docker-compose.yml](docker-compose.yml) mounts the following
 directories as persistent storage for the containers in the
-`volumes` standza.
+`volumes` stanza.
 
 You may specify alternative source path for your setup but the
 target mount points must remain the same.
@@ -46,7 +46,7 @@ target mount points must remain the same.
 
 - docker-compose, <https://docs.docker.com/compose/install/>
 
-- you are a member of `docker` group, so you can run `docker` CLI
+- you are a member of docker group, so you can run docker CLI
 
 
 ## How to spin up fresh instance of Sonarqube
@@ -117,7 +117,8 @@ SQ_HTTP_PORT=80
   and Sonarqube containers share the same private docker network.
   `POSTGRES_HOST` value is set to match the name of PostgreSQL
   service defined in [docker-compose.yml](docker-compose.yml)
-  If you run PostgreSQL server elsewhere, set these accordingly.
+  If you run PostgreSQL server elsewhere, set these accordingly
+  and remove the entire `postgresql` stanza from docker-compose.yml
   
 - `SQ_IMAGE` is the Sonarqube community edition release that
   I have tested to work. I don't know if future or past releases
@@ -253,3 +254,47 @@ Further information about the scanner:
 
 - <https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/>
 - <https://github.com/SonarSource/sonar-scanner-cli-docker/>
+
+## Operational notes
+
+### Back up and restore PostgreSQL
+
+To get a database dump. You can name the output file with any name but keep the extension to `.sql` or `.sql.gz`.
+
+```
+docker-compose exec postgresql pg_dump sonarqube > sonarqube.sql
+
+# gzip for a more compressed output
+docker-compose exec postgresql pg_dump sonarqube | gzip > sonarqube.sql.gz
+```
+
+To restore, firstly, clone this repo in a new and empty directory. Edit docker-compose.yml to add another 
+volume in the `postgresql` stanza with the correct indentation level,
+
+```
+- ./pgdata-restore:/docker-entrypoint-initdb.d`
+```
+
+Under the new repo directory, create a subdirectory named `pgdata-restore` and copy one pg_dump output
+into this new subdirectory
+
+```
+cd {new_repo_directory}
+docker-compose up -d postgresql
+docker-compose logs -f postgresql
+```
+
+Watch the scrolling log output. You should see the 
+[postgres bootstrapping script](https://github.com/docker-library/postgres/blob/master/docker-entrypoint.sh) 
+run `pg_restore` on your dump file. The script only uses dump files inside the container matching this,
+`/docker-entrypoint-initdb.d/*.{sql,sql.gz}`
+
+You can use this dump/restore method to upgrade to new major releases of PostgreSQL or Sonarqube safely
+by modifying their image tags in docker-compose.yml.
+
+### Tune PostgreSQL
+
+Check out https://pgtune.leopard.in.ua/#/
+
+Try out the recommended settings by appending to the end of `pgdata/postgresql.conf`. Of course, you should
+do so when the containers are not running.
