@@ -118,7 +118,8 @@ SQ_HTTP_PORT=80
   `POSTGRES_HOST` value is set to match the name of PostgreSQL
   service defined in [docker-compose.yml](docker-compose.yml)
   If you run PostgreSQL server elsewhere, set these accordingly
-  and remove the entire `postgresql` stanza from docker-compose.yml
+  and remove the entire `postgresql` stanza and `depends_on`
+  from docker-compose.yml
   
 - `SQ_IMAGE` is the Sonarqube community edition release that
   I have tested to work. I don't know if future or past releases
@@ -255,6 +256,24 @@ Further information about the scanner:
 - <https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/>
 - <https://github.com/SonarSource/sonar-scanner-cli-docker/>
 
+---
+**Important**
+
+Sonarqube server needs the following to be consistent, i.e. snapshot at the same time. Otherwise, it will fail to start up.
+
+- database contents
+- /opt/sonarqube/data (inside container)
+- /opt/sonarqube/extensions (inside container)
+
+So, any backup/restore strategy has to take this into account.
+
+Switching Postgresql database server from one to another is trivial i.e. pg_dump, pg_restore, as long as they run exactly the same version of PostgreSQL. Otherwise, you have two options:
+
+- time consuming and untried https://stackoverflow.com/a/57148722 
+- paid customers only, http://docs.sonarqube.org/display/SONAR/Sonar+DB+Copy+Tool
+
+---
+
 ## Operational notes
 
 ### Back up and restore PostgreSQL
@@ -262,10 +281,10 @@ Further information about the scanner:
 To get a database dump. You can name the output file with any name but keep the extension to `.sql` or `.sql.gz`.
 
 ```
-docker-compose exec postgresql pg_dump sonarqube > sonarqube.sql
+docker-compose exec -T postgresql pg_dump sonarqube > sonarqube.sql
 
 # gzip for a more compressed output
-docker-compose exec postgresql pg_dump sonarqube | gzip > sonarqube.sql.gz
+docker-compose exec -T postgresql pg_dump sonarqube | gzip > sonarqube.sql.gz
 ```
 
 To restore, firstly, clone this repo in a new and empty directory. Edit docker-compose.yml to add another 
