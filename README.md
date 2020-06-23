@@ -251,6 +251,12 @@ docker run -it \
  -Dsonar.projectKey=$(basename $PWD)
 ```
 
+The scanner will leave behind two subdirectories in your repository,
+which you probably add to your `.gitignore`
+
+- scannerwork/
+- sonar/
+
 Further information about the scanner:
 
 - <https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/>
