@@ -136,29 +136,12 @@ SQ_HTTP_PORT=80
 Validate your `.env` file. The output should be full YAML file with
 the correct values substituted, without any warning message
 
-```
+```bash
 docker-compose config
 ```
 
 The Sonarqube docker image may be customized with extra environment variables,
 <https://docs.sonarqube.org/latest/setup/environment-variables/>
-
-## How to add projects to Sonarqube
-
-Here, I describe what I find to be the quickest way - run Sonarqube
-CLI scanner against a repository already present on your workstation.
-
-For production use involving multiple teams or large number of
-projects (code repo), you probably want to consider more scaleable
-and effective approaches, preferrably one that integrates into
-your CI/CD workflow:
-
-- the official documentation mentions Jenkins and GitLab
-  <https://docs.sonarqube.org/latest/analysis/branch-pr-analysis-overview/>
-
-- using Sonarqube dashboard,
-  <https://docs.bitnami.com/oci/how-to/analyze-projects-sonarqube/>
-
 
 ### Pull images, initilize database and application
 
@@ -167,7 +150,7 @@ You only need to do this once.
 The datbase directory must be completely empty otherwise the
 bootstrapping script will not perform database initialization.
 
-```
+```bash
 # Pull required images
 docker-compose pull
 
@@ -185,7 +168,7 @@ and stops scrolling, press CTRL-C and stop watching the log.
 Next, start Sonarqube container which will detect the fresh
 instance is being created. This process may take up to 3 minutes.
 
-```
+```bash
 docker-compose up -d
 
 docker-compose logs -f
@@ -207,17 +190,41 @@ press CTRL-C to stop watching the log. The application is ready!
 
 ### Get a token
 
-- In the same My Account - Security tab, click "Generate toke"
+- In the same My Account - Security tab
 
-- Copy and save token safely somewhere
+- Enter a meaningful name for a new token, click "Generate token"
+
+- Copy and save token safely somewhere. The token is a proxy for your identity.
+  You can reuse it to scan more than one repo.
 
 ### Add language extensions
+
+Sonarqube server's scan coverage and capabilities are limited by the extensions installed. 
+Out of the box, it actually doesn't know any language, quality rules, etc.
+
+https://www.sonarplugins.com/
 
 - Navigate to Marketplace
 
 - Install the extensions you want. Typically, it will prompt
   you to restart Sonarqube. So you prabably want to choose
   a few of them at one go.
+
+## How to add projects to Sonarqube
+
+Here, I describe what I find to be the quickest way - run Sonarqube
+CLI scanner against a repository already present on your workstation.
+
+For production use involving multiple teams or large number of
+projects (code repo), you probably want to consider more scaleable
+and effective approaches, preferrably one that integrates into
+your CI/CD workflow:
+
+- the official documentation mentions Jenkins and GitLab
+  <https://docs.sonarqube.org/latest/analysis/branch-pr-analysis-overview/>
+
+- using Sonarqube dashboard,
+  <https://docs.bitnami.com/oci/how-to/analyze-projects-sonarqube/>
 
 ### Import project using scanner
 
@@ -232,15 +239,7 @@ modify `projectKey` value accordingly.
 You may pass additional project parameters in the same command,
 <https://docs.sonarqube.org/latest/analysis/analysis-parameters/>
 
-Based on the language extensions you have installed,
-Sonarqube automatically detects them based on the file names.
-You can explicitly exclude specific file/directory from being
-scanned:
-
-- <https://stackoverflow.com/a/35358747>
-- <https://docs.sonarqube.org/latest/analysis/coverage/>
-
-```
+```bash
 cd {your_repo_directory}
 
 docker run -it \
@@ -256,6 +255,14 @@ which you probably add to your `.gitignore`
 
 - scannerwork/
 - sonar/
+
+Based on the language extensions you have installed,
+Sonarqube automatically detects them based on the file names.
+You can explicitly exclude specific file/directory from being
+scanned:
+
+- <https://stackoverflow.com/a/35358747>
+- <https://docs.sonarqube.org/latest/analysis/coverage/>
 
 Further information about the scanner:
 
