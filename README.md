@@ -5,6 +5,13 @@ analysis tool, quickly and painlessly. The server can process multiple
 languages based on the *extensions* you install,
 <https://www.sonarqube.org/features/multi-languages/>
 
+The example [docker-compose.yml](docker-compose.yml) incuded here spins
+up a PostgreSQL server container. But, it is trivial to connect to your
+existing server instead.
+
+Sonarqube requires Elasticserch which it is included in the base image,
+inextricably. So you'll have to stick with it.
+
 ---
 **CAVEAT**
 
@@ -22,7 +29,11 @@ error about a certain column not supporting UTF-8 encoding.
 Sonarqube also has this warning displayed on
 [Docker Hub](https://hub.docker.com/_/sonarqube/)
 
-> Only a single instance of SonarQube can connect to a database schema. If you're using a Docker Swarm or Kubernetes, make sure that multiple SonarQube instances are never running on the same database schema simultaneously. This will cause SonarQube to behave unpredictably and data will be corrupted. There is no safeguard until [SONAR-10362](https://jira.sonarsource.com/browse/SONAR-10362).
+> Only a single instance of SonarQube can connect to a database schema. 
+  If you're using a Docker Swarm or Kubernetes, make sure that multiple 
+  SonarQube instances are never running on the same database schema simultaneously. 
+  This will cause SonarQube to behave unpredictably and data will be corrupted. 
+  There is no safeguard until [SONAR-10362](https://jira.sonarsource.com/browse/SONAR-10362).
 
 ---
 
@@ -209,6 +220,9 @@ https://www.sonarplugins.com/
 - Install the extensions you want. Typically, it will prompt
   you to restart Sonarqube. So you prabably want to choose
   a few of them at one go.
+  
+- Some plugins require additional parameters. So, make sure you
+  know what they are e.g. [PL/SQL](https://docs.sonarqube.org/latest/analysis/languages/plsql/)
 
 ## How to add projects to Sonarqube
 
